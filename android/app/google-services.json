@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "964688389099",
+    "firebase_url": "https://lechate-xbaldiq.firebaseio.com",
+    "project_id": "lechate-xbaldiq",
+    "storage_bucket": "lechate-xbaldiq.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:964688389099:android:a0d011c826034d1b0eefae",
+        "android_client_info": {
+          "package_name": "com.lechate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "964688389099-smel41rk7fs39rr9l70okpgkus4msei2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXShyvk-56BEVErR-rXFCRhmSwqltI-uk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "964688389099-smel41rk7fs39rr9l70okpgkus4msei2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

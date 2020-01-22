@@ -1,0 +1,12 @@
+import React from 'react'
+import {Text} from 'react-native'
+
+const ChatList = () => {
+    return (
+        <Text>
+            Ini ChatList
+        </Text>
+    )
+}
+
+export default ChatList
