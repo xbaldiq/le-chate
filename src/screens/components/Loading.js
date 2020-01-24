@@ -2,14 +2,15 @@ import React, { Component } from 'react';
 import { View } from 'react-native-animatable';
 import { ActivityIndicator, Colors } from 'react-native-paper';
 import auth, { firebase } from '@react-native-firebase/auth';
+// import { DB, Auth } from '../../configs/firebase';
 
 export default class Loading extends Component {
-  componentDidMount = () => {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) this.props.navigation.navigate('Map');
-      else this.props.navigation.navigate('Login');
-    });
-  };
+  // componentDidMount = () => {
+  //   auth().onAuthStateChanged(user => {
+  //     if (user) this.props.navigation.navigate('Map');
+  //     else this.props.navigation.navigate('Login');
+  //   });
+  // };
 
   render() {
     return (

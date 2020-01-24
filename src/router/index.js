@@ -1,11 +1,12 @@
 import React from 'react';
-import { Login, Register, Map, Chat, ChatList, Profile, Loading  } from '../screens/';
+import { Login, Register, Map, Chat, Debug, ChatList, Profile, Loading  } from '../screens/';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Feather from 'react-native-vector-icons/Feather';
 
 const AuthStack = createStackNavigator(
   {
@@ -48,6 +49,16 @@ const AppStack = createMaterialBottomTabNavigator(
         ),
         tabBarLabel: 'Profile'
       }
+    },
+
+    Debug: {
+      screen: Debug,
+      navigationOptions: {
+        tabBarIcon: ({ tintColor }) => (
+          <Feather name='log-out' size={24} color={tintColor} />
+        ),
+        tabBarLabel: 'Debug'
+      }
     }
   },
   {
@@ -67,7 +78,7 @@ const Router = createSwitchNavigator(
     AuthStack,
   },
   {
-    initialRouteName: 'Loading'
+    initialRouteName: 'AppStack'
   }
 );
 

@@ -5,6 +5,7 @@ import ChatList from './main/ChatList'
 import Map from './main/Map'
 import Profile from './main/Profile'
 import Loading from './components/Loading'
+import Debug from './main/Debug'
 
 
 export {
@@ -15,4 +16,5 @@ export {
     Map,
     Profile,
     Loading,
+    Debug
 }

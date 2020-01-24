@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { Component } from 'react'
 import {Text} from 'react-native'
 
-const Chat = () => {
-    return (
-        <Text>
-            Ini Chat
-        </Text>
-    )
+class Chat extends Component {
+    render() {
+        return (
+            <div>
+                
+            </div>
+        )
+    }
 }
 
 export default Chat
