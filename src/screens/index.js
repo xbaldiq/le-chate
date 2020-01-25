@@ -6,6 +6,7 @@ import Map from './main/Map'
 import Profile from './main/Profile'
 import Loading from './components/Loading'
 import Debug from './main/Debug'
+import UpdateProfilePhoto from './main/UpdateProfilePhoto'
 
 
 export {
@@ -16,5 +17,6 @@ export {
     Map,
     Profile,
     Loading,
-    Debug
+    Debug,
+    UpdateProfilePhoto,
 }

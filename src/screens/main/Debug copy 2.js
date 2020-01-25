@@ -21,6 +21,9 @@ import {
   DebugInstructions,
   ReloadInstructions
 } from 'react-native/Libraries/NewAppScreen';
+import RNFetchBlob from 'react-native-fetch-blob';
+
+import { Database, Auth, Storage } from '../../configs/firebase';
 
 const options = {
   title: 'Select Avatar',
@@ -31,7 +34,7 @@ const options = {
   }
 };
 
-class EditProfilePhoto extends Component {
+class Debug extends Component {
   state = {
     filepath: {
       data: '',
@@ -88,22 +91,29 @@ class EditProfilePhoto extends Component {
     ImagePicker.launchCamera(options, response => {
       console.log('Response = ', response);
 
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-        alert(response.customButton);
-      } else {
-        const source = { uri: response.uri };
-        console.log('response', JSON.stringify(response));
-        this.setState({
-          filePath: response,
-          fileData: response.data,
-          fileUri: response.uri
+      Storage.ref('images/' + '1')
+        // .child(`${blah}.jpg`)
+        .putString(response.data, 'BASE64', { contentType: 'image/jpeg' })
+        .then(function(snapshot) {
+          console.log('Uploaded a raw string!');
+
+          if (response.didCancel) {
+            console.log('User cancelled image picker');
+          } else if (response.error) {
+            console.log('ImagePicker Error: ', response.error);
+          } else if (response.customButton) {
+            console.log('User tapped custom button: ', response.customButton);
+            alert(response.customButton);
+          } else {
+            const source = { uri: response.uri };
+            console.log('response', JSON.stringify(response));
+            this.setState({
+              filePath: response,
+              fileData: response.data,
+              fileUri: response.uri
+            });
+          }
         });
-      }
     });
   };
 
@@ -262,4 +272,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withNavigationFocus(EditProfilePhoto);
+export default withNavigationFocus(Debug);

@@ -4,7 +4,8 @@ import {
   View,
   TouchableOpacity,
   Alert,
-  ToastAndroid
+  ToastAndroid,
+  Image
 } from 'react-native';
 // import auth, { firebase } from '@react-native-firebase/auth';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
@@ -18,30 +19,29 @@ class Map extends Component {
   state = {
     myLocation: '',
     latitude: -7.7584646,
-    longitude: 110.3782009
+    longitude: 110.3782009,
+    friendList: [],
+    filteredFriendList: [],
+    id: 0
   };
 
   componentDidMount = async () => {
-    const user = Auth.currentUser;
-    console.log('map', user.uid);
-
     Auth.onAuthStateChanged(user => {
       if (!user) this.props.navigation.navigate('Login');
     });
 
-    this.accessMap();
+    this.setState({ id: await AsyncStorage.getItem('id') }, () => {
+      this.grantMapAccess();
+      let changeData = Database.ref('users/');
 
-    let changeData = Database.ref('users/' + user.uid);
-    changeData.on('value', () => {
-      // updateStarCount(postElement, snapshot.val());
-      console.log('updated');
+      changeData.on('value', () => {
+        this.getFriendLocation();
+        console.log('Database updated');
+      });
     });
-
-    // console.log('name',await AsyncStorage.getItem('name'))
-    // console.log('address',await AsyncStorage.getItem('address'))
   };
 
-  accessMap = async () => {
+  grantMapAccess = async () => {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
@@ -66,12 +66,40 @@ class Map extends Component {
     }
   };
 
+  getFriendLocation = async () => {
+    console.log('getFriendLocation');
+    await Database.ref('users/')
+      // .orderByChild('email')
+      // .equalTo(this.state.email)
+      .once('value', async snapshot => {
+        const result = snapshot.val();
+        // console.log('result',result)
+        let friendList = Object.values(result);
+
+        let filteredFriendList = friendList.filter(user => {
+          return user.id != this.state.id;
+        });
+
+        this.setState({ filteredFriendList }, () => {
+          // console.log('friend',this.state.filteredFriendList)
+          this.state.filteredFriendList.forEach(user => {
+            console.log('user', user);
+            // console.log('lat: ', user.name);
+          });
+        });
+      });
+  };
+
   render() {
     return (
       <>
         <View style={{ flex: 1 }}>
           <MapView
             provider={PROVIDER_GOOGLE}
+            showsMyLocationButton={true}
+            showsIndoorLevelPicker={true}
+            showsUserLocation={true}
+            zoomControlEnabled={true}
             initialRegion={{
               latitude: this.state.latitude,
               longitude: this.state.longitude,
@@ -80,16 +108,55 @@ class Map extends Component {
             }}
             style={{ width: '100%', height: '100%' }}
           >
-            <Marker
+            {/* <Marker
               coordinate={{
                 latitude: this.state.latitude,
                 longitude: this.state.longitude
               }}
               title='Lokasi saya'
               description={`${this.state.latitude} ${this.state.longitude}`}
-            />
+            /> */}
+            {this.state.filteredFriendList.map((user, index) => {
+              return (
+                <Marker
+                  key={index}
+                  coordinate={{
+                    latitude: user.latitude,
+                    longitude: user.longitude
+                  }}
+                  title={user.name}
+                  description={user.bio}
+                >
+                  <View style={{alignItems: 'center'}}>
+                    <Image
+                      source={{
+                        uri: user.photo
+                      }}
+                      style={{
+                        height: 50,
+                        width: 50,
+                        borderRadius: 50,
+                        borderWidth: 1,
+                        borderColor: '#7D2941'
+                      }}
+                    ></Image>
+                    <Image
+                      source={require('../../assets/drop-down-arrow.png')}
+                      style={{
+                        marginTop: -2,
+                        height: 20,
+                        width: 20,
+                        borderRadius: 50,
+                        // borderWidth: 1,
+                        opacity: 0.5,
+                        borderColor: '#7D2941'
+                      }}
+                    ></Image>
+                  </View>
+                </Marker>
+              );
+            })}
           </MapView>
-          <Text>{`Location: ${this.state.myLocation}`}</Text>
         </View>
       </>
     );

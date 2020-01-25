@@ -1,4 +1,5 @@
 import { Database, Auth } from './firebase';
+import AsyncStorage from '@react-native-community/async-storage';
 // import firebase from 'firebase';
 
 class FireChat {
@@ -36,9 +37,15 @@ class FireChat {
   get uid() {
     return (Auth.currentUser || {}).uid;
   }
+  
+  setId = async () => {
+    return await AsyncStorage.getItem('id')
+  }
 
   get ref() {
     return Database.ref('messages');
+    
+    // return Database.ref('messages/').orderByChild('user/name').equalTo('Si Otong');
   }
 
   parse = snapshot => {
@@ -69,7 +76,7 @@ class FireChat {
       const message = {
         text,
         user,
-        // timestamp: this.timestamp,Z
+        // timestamp: this.timestamp,
       };
       this.append(message);
     }

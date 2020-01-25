@@ -28,54 +28,27 @@ import { Database, Auth } from '../../configs/firebase';
 class Profile extends Component {
   componentDidMount = async () => {
     this.setState({ id: await AsyncStorage.getItem('id') });
-
-    console.log('ID', this.state.id);
-
+    console.log('profileID', this.state.id);
     this.getProfile();
-
-    // this.setState({ name: await AsyncStorage.getItem('name') });
-    // this.setState({ email: await AsyncStorage.getItem('email') });
-    // this.setState({ bio: await AsyncStorage.getItem('bio') });
-    // this.setState({ desc: await AsyncStorage.getItem('desc') });
-    // this.setState({ phone: await AsyncStorage.getItem('phone') });
-    // this.setState({ address: await AsyncStorage.getItem('address') });
-
-    // await retrieveData('token');
-
-    // const user = auth().currentUser;
-    // database()
-    //   .ref('users/')
-    //   .orderByChild('email')
-    //   .equalTo('r13.aero@yahoo.co.id')
-    //   .once('value', async snapshot => {
-    //     const result = snapshot.val();
-    //     let user = Object.values(result);
-
-    //     console.log(user[0].name);
-    //     console.log(user[0].email);
-    //     console.log(user[0].address);
-    //   });
   };
 
   getProfile = () => {
-    Database
-      .ref('users/' + this.state.id)
-      .once('value', snapshot => {
-        const result = snapshot.val();
+    Database.ref('users/' + this.state.id).on('value', snapshot => {
+      const result = snapshot.val();
 
-        this.setState({ name: result.name });
-        this.setState({ email: result.email });
-        this.setState({ bio: result.bio });
-        this.setState({ desc: result.desc });
-        this.setState({ phone: result.phone });
-        this.setState({ address: result.address });
+      this.setState({ name: result.name });
+      this.setState({ email: result.email });
+      this.setState({ bio: result.bio });
+      this.setState({ desc: result.desc });
+      this.setState({ phone: result.phone });
+      this.setState({ address: result.address });
+      this.setState({ photo: result.photo });
 
-        AsyncStorage.setItem('email', result.email);
-        AsyncStorage.setItem('name', result.name);
-        AsyncStorage.setItem('bio', result.bio);
-
-        // console.log(profile)
-      });
+      AsyncStorage.setItem('email', result.email);
+      AsyncStorage.setItem('photo', result.photo);
+      AsyncStorage.setItem('name', result.name);
+      AsyncStorage.setItem('bio', result.bio);
+    });
   };
 
   state = {
@@ -89,36 +62,22 @@ class Profile extends Component {
 
   cancelEdit = async () => {
     this.getProfile();
-    // this.setState({ name: await AsyncStorage.getItem('name') });
-    // this.setState({ email: await AsyncStorage.getItem('email') });
-    // this.setState({ bio: await AsyncStorage.getItem('bio') });
-    // this.setState({ desc: await AsyncStorage.getItem('desc') });
-    // this.setState({ phone: await AsyncStorage.getItem('phone') });
-    // this.setState({ address: await AsyncStorage.getItem('address') });
 
     this.setState({ editable: !this.state.editable });
   };
 
   acceptEdit = async () => {
-    // await database()
-    // .ref('users/')
-    // .orderByChild('email')
-    // .equalTo(this.state.email)
-    // .once('value', async snapshot => {
-
-    // })
-
+    
     console.log('id', this.state.id);
 
-    await Database
-      .ref(`/users/${this.state.id}`)
-      .update({
-        name: this.state.name,
-        email: this.state.email,
-        bio: this.state.bio,
-        desc: this.state.desc,
-        phone: this.state.phone
-      });
+    await Database.ref(`/users/${this.state.id}`).update({
+      name: this.state.name,
+      email: this.state.email,
+      bio: this.state.bio,
+      desc: this.state.desc,
+      phone: this.state.phone,
+      address: this.state.address
+    });
 
     this.setState({ editable: !this.state.editable });
 
@@ -139,20 +98,19 @@ class Profile extends Component {
                 alignItems: 'center'
               }}
             >
-              <Image
-                source={defaultProfPict}
-                style={{
-                  // marginTop: -100,
-                  width: 170,
-                  height: 170,
-                  borderRadius: 170 / 2,
-                  overflow: 'hidden',
-                  borderWidth: 3,
-                  borderColor: '#7D2941'
-                }}
-
-                // resizeMode='stretch'
-              />
+              <TouchableOpacity onPress={() => {this.props.navigation.navigate('UpdateProfilePhoto')}}>
+                <Image
+                  source={{uri:this.state.photo}}
+                  style={{
+                    width: 170,
+                    height: 170,
+                    borderRadius: 170 / 2,
+                    overflow: 'hidden',
+                    borderWidth: 3,
+                    borderColor: '#7D2941'
+                  }}
+                />
+              </TouchableOpacity>
 
               <Text style={{ paddingTop: 10 }}>{this.state.bio}</Text>
 

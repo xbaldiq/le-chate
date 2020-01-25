@@ -1,5 +1,5 @@
 import React from 'react';
-import { Login, Register, Map, Chat, Debug, ChatList, Profile, Loading  } from '../screens/';
+import { Login, Register, Map, Chat, Debug, ChatList, Profile, Loading, UpdateProfilePhoto  } from '../screens/';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
@@ -19,7 +19,7 @@ const AuthStack = createStackNavigator(
   }
 );
 
-const AppStack = createMaterialBottomTabNavigator(
+const BottomStack = createMaterialBottomTabNavigator(
   {
     Map: {
       screen: Map,
@@ -69,6 +69,19 @@ const AppStack = createMaterialBottomTabNavigator(
     // barStyle: { backgroundColor: '#482637' }
     barStyle: { backgroundColor: '#7D2941' },
     headerMode: 'none',
+  }
+);
+
+
+const AppStack = createStackNavigator(
+  {
+    BottomStack,
+    UpdateProfilePhoto,
+    Chat
+  },
+  {
+    headerMode: 'none',
+    initialRouteName: 'BottomStack'
   }
 );
 const Router = createSwitchNavigator(
