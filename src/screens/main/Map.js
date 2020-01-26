@@ -36,13 +36,11 @@ class Map extends Component {
   componentDidMount = async () => {
     Auth.onAuthStateChanged(async user => {
       if (!user) {
+        Geolocation.clearWatch(this.watchID)
         this.props.navigation.navigate('Login');
-        await Database.ref('/users/' + this.state.id)
-          // .child('isLogged')
-          .update({ isLogged: false });
+
 
           
-          Geolocation.clearWatch(this.watchID)
 
         // Database.ref('users/'+this.)
       }
@@ -297,6 +295,7 @@ class Map extends Component {
               // width: 2 00,
               height: 70,
               // backgroundColor: '#000',
+              // backgroundColor: 'rgba(131, 51, 233, 0.6)',
               backgroundColor: 'rgba(0, 0, 0, 0.5)',
               // opacity: 0.5,
               borderRadius: 15,

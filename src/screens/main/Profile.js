@@ -171,7 +171,7 @@ class Profile extends Component {
                   }}
                 />
               </TouchableOpacity>
-              <Text style={{ paddingTop: 10 }}>{this.state.bio}</Text>
+              {/* <Text style={{ paddingTop: 10 }}>{this.state.bio}</Text> */}
 
               <TouchableOpacity
                   style={{

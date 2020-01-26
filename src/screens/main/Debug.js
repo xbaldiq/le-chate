@@ -14,6 +14,10 @@ class Debug extends Component {
       .then(async res => {
         // Sign-out successful.
 
+        await Database.ref('/users/' + this.state.id)
+        // .child('isLogged')
+        .update({ isLogged: false });
+
         this.setState(
           { id: await AsyncStorage.getItem('id') },
         );
@@ -30,7 +34,7 @@ class Debug extends Component {
   };
 
   render() {
-    return <Text>ini debug</Text>;
+    return <Text></Text>;
   }
 }
 export default withNavigationFocus(Debug);

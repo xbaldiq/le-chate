@@ -84,12 +84,14 @@ class Chat extends Component {
   }
 
   parse = snapshot => {
-    const { timestamp: numberStamp, text, user } = snapshot.val();
+    const { timestamp: numberStamp, createdAt, text, user } = snapshot.val();
     const { key: _id } = snapshot;
     const timestamp = new Date(numberStamp);
+    // const createdAt = new Date(created_at);;
     const message = {
       _id,
       timestamp,
+      createdAt,
       text,
       user
     };
@@ -112,13 +114,18 @@ class Chat extends Component {
     console.log(this.state.messages);
   };
 
+  get timestamp() {
+    return Database.ServerValue.TIMESTAMP;
+  }
+
   send = messages => {
     for (let i = 0; i < messages.length; i++) {
       const { text, user } = messages[i];
       const message = {
         text,
-        user
-        // timestamp: this.timestamp
+        user,
+        timestamp: Date.now(),
+        createdAt: Date.now()
       };
       this.append(message);
     }
@@ -136,6 +143,8 @@ class Chat extends Component {
               flexDirection: 'row',
               alignItems: 'center',
               padding: 15,
+              borderBottomWidth: 4,
+              borderBottomColor: '#FF7FAE',
               backgroundColor: '#8333e9'
             }}
           >
@@ -156,7 +165,7 @@ class Chat extends Component {
               }}
             />
             <View style={{ justifyContent: 'flex-start' }}>
-              <Text style={{ paddingLeft: 15, marginBottom:5, color: '#FFF' }}>
+              <Text style={{ paddingLeft: 15, marginBottom: 5, color: '#FFF' }}>
                 {this.state.friendName}
               </Text>
               <View
@@ -187,11 +196,18 @@ class Chat extends Component {
             </View>
           </View>
         </TouchableOpacity>
-        <GiftedChat
-          messages={this.state.messages}
-          onSend={this.send}
-          user={this.user}
-        />
+        {/* <View> */}
+        <View style={{ backgroundColor: '#fff', flex: 1 }}>
+          <GiftedChat
+            renderAvatar={null}
+            scrollToBottom={true}
+            // renderAvatarOnTop={true}
+            messages={this.state.messages}
+            onSend={this.send}
+            user={this.user}
+          />
+        </View>
+        {/* </View> */}
       </>
     );
   }

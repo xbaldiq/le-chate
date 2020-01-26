@@ -44,7 +44,7 @@ class UpdateProfilePhoto extends Component {
     fileUri: '',
     currentPhoto: '',
     isUpdated: false,
-    applyChanges: false,
+    applyChanges: false
   };
 
   componentDidMount = async () => {
@@ -76,16 +76,51 @@ class UpdateProfilePhoto extends Component {
         console.log('User tapped custom button: ', response.customButton);
         alert(response.customButton);
       } else {
-        const source = { uri: response.uri };
+        const Blob = RNFetchBlob.polyfill.Blob;
+        const fs = RNFetchBlob.fs;
+        window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+        window.Blob = Blob;
 
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-        // alert(JSON.stringify(response));s
-        console.log('response', JSON.stringify(response));
+        let uploadBob = null;
+
+        const source = { uri: response.uri };
+        this.uploadImage(source);
+
+        console.log('source', source);
+
+        // Convert Blob
+        const imageRef = Storage.ref('images/' + this.state.id);
+        // .child('photo');
+        fs.readFile(response.path, 'base64')
+          .then(data => {
+            // return Blob.build(data, {type: `${response.mime};BASE64`});
+            return Blob.build(data, { type: `;BASE64` });
+          })
+          .then(blob => {
+            uploadBob = blob;
+            return imageRef.put(blob, { contentType: `image/jpeg` });
+          })
+          .then(() => {
+            uploadBob.close();
+            return imageRef.getDownloadURL();
+          })
+          .then(url => {
+            // ToastAndroid.show(
+            //   'Your cool avatar is being uploaded, its going back to your phone now',
+            //   ToastAndroid.LONG,
+            // );
+            Database.ref('users/' + this.state.id).update({ photo: url });
+
+            Alert.alert('Profile Pict Updated');
+            // this.setState({userAvatar: url});
+            // AsyncStorage.setItem('user.photo', this.state.userAvatar);
+          });
+
         this.setState({
           filePath: response,
           fileData: response.data,
-          fileUri: response.uri
+          fileUri: response.uri,
+          isUpdated: true
         });
       }
     });
@@ -186,12 +221,53 @@ class UpdateProfilePhoto extends Component {
         console.log('User tapped custom button: ', response.customButton);
         alert(response.customButton);
       } else {
+        // Finish take a picture
+
+        const Blob = RNFetchBlob.polyfill.Blob;
+        const fs = RNFetchBlob.fs;
+        window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+        window.Blob = Blob;
+
+        let uploadBob = null;
+
         const source = { uri: response.uri };
-        console.log('response', JSON.stringify(response));
+        this.uploadImage(source);
+
+        console.log('source', source);
+
+        // Convert Blob
+        const imageRef = Storage.ref('images/' + this.state.id);
+        // .child('photo');
+        fs.readFile(response.path, 'base64')
+          .then(data => {
+            // return Blob.build(data, {type: `${response.mime};BASE64`});
+            return Blob.build(data, { type: `;BASE64` });
+          })
+          .then(blob => {
+            uploadBob = blob;
+            return imageRef.put(blob, { contentType: `image/jpeg` });
+          })
+          .then(() => {
+            uploadBob.close();
+            return imageRef.getDownloadURL();
+          })
+          .then(url => {
+            // ToastAndroid.show(
+            //   'Your cool avatar is being uploaded, its going back to your phone now',
+            //   ToastAndroid.LONG,
+            // );
+            Database.ref('users/' + this.state.id).update({ photo: url });
+
+            Alert.alert('Profile Pict Updated');
+            // this.setState({userAvatar: url});
+            // AsyncStorage.setItem('user.photo', this.state.userAvatar);
+          });
+
         this.setState({
           filePath: response,
           fileData: response.data,
-          fileUri: response.uri
+          fileUri: response.uri,
+          isUpdated: true
         });
       }
     });
@@ -241,7 +317,7 @@ class UpdateProfilePhoto extends Component {
           <Text
             style={{ textAlign: 'center', fontSize: 20, paddingBottom: 10 }}
           >
-            Pick Images from Camera & Gallery
+            Choose Image Source
           </Text>
           <View style={styles.ImageSections}>
             <View>
@@ -316,15 +392,15 @@ const styles = StyleSheet.create({
   btnSection: {
     width: 225,
     height: 50,
-    backgroundColor: '#DCDCDC',
+    backgroundColor: '#8333e9',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 3,
+    borderRadius: 50,
     marginBottom: 10
   },
   btnText: {
     textAlign: 'center',
-    color: 'gray',
+    color: 'white',
     fontSize: 14,
     fontWeight: 'bold'
   }

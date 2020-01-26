@@ -61,24 +61,24 @@ class Login extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: '#fff', alignItems:'center' }}>
         <View
           style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
           <Image
-            style={{ paddingVertical: 30, width: 200 }}
+            style={{ paddingTop: 30, width: 200 }}
             source={require('../../assets/logo-lechate.png')}
           />
-          <Text>Please enter your credentials to continue</Text>
+          <Text style={{paddingVertical:30}}>Please enter your credentials to continue</Text>
         </View>
 
-        <View style={{ flex: 1, width: '100%' }}>
+        <View style={{marginBottom:30, width: '80%', backgroundColor:'white', elevation:5 }}>
           <TextInput
             label='Email'
             value={this.state.email}
             // backgroundColor=''
             // backgroundColor='black'
-            // style={{backgroundColor:'white'}}
+            style={{backgroundColor:'white'}}
             // placeholderTextColor='black'
             onChangeText={email => this.setState({ email })}
           />
@@ -87,6 +87,7 @@ class Login extends Component {
             label='Password'
             secureTextEntry={true}
             value={this.state.password}
+            style={{backgroundColor:'white'}}
             onChangeText={password => this.setState({ password })}
           />
 
@@ -100,15 +101,7 @@ class Login extends Component {
             Login
           </Button>
 
-          <View style={{ marginTop: 20, alignItems: 'center' }}>
-            <TouchableOpacity
-              onPress={() => {
-                this.props.navigation.navigate('Register');
-              }}
-            >
-              <Text>Your first visit to Le Chate App? Register here</Text>
-            </TouchableOpacity>
-          </View>
+
 
           <View>
             {/* {this.state.errorMessage.includes('invalid-email') && ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT)} */}
@@ -122,7 +115,17 @@ class Login extends Component {
               <Text>Invalid Password</Text>
             )}
           </View>
+          
         </View>
+        <View style={{marginVertical: 50, alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={() => {
+                this.props.navigation.navigate('Register');
+              }}
+            >
+              <Text>Your first visit to Le Chate App? Register here</Text>
+            </TouchableOpacity>
+          </View>
       </View>
     );
   }
