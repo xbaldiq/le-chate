@@ -51,23 +51,23 @@ const BottomStack = createMaterialBottomTabNavigator(
       }
     },
 
-    Debug: {
-      screen: Debug,
-      navigationOptions: {
-        tabBarIcon: ({ tintColor }) => (
-          <Feather name='log-out' size={24} color={tintColor} />
-        ),
-        tabBarLabel: 'Debug'
-      }
-    }
+    // Debug: {
+    //   screen: Debug,
+    //   navigationOptions: {
+    //     tabBarIcon: ({ tintColor }) => (
+    //       <Feather name='log-out' size={24} color={tintColor} />
+    //     ),
+    //     tabBarLabel: 'Debug'
+    //   }
+    // }
   },
   {
     initialRouteName: 'Map',
-    activeColor: '#FFF',
+    // activeColor: '#FFF',
     // inactiveColor: '#3e2465',
-    inactiveColor: '#B1A2A2',
+    // inactiveColor: '#EDEDED',
     // barStyle: { backgroundColor: '#482637' }
-    barStyle: { backgroundColor: '#7D2941' },
+    barStyle: { backgroundColor: '#8333e9', borderTopWidth:4, borderTopColor:'#ff7fae'},
     headerMode: 'none',
   }
 );

@@ -66,9 +66,10 @@ class Register extends Component {
           desc: 'Please update',
           phone: 'Please update',
           address: 'Please update',
+          photo: 'https://firebasestorage.googleapis.com/v0/b/lechate-xbaldiq.appspot.com/o/images%2Fnorth_korea_the_real_kim.jpg?alt=media&token=a5f9814a-f753-4ece-8469-d78fb1fd247c'
         });
 
-        Alert.alert("Registered:")
+        Alert.alert("Success Registered")
         this.props.navigation.navigate('Login');
 
       })
@@ -111,6 +112,7 @@ class Register extends Component {
             raised
             mode='contained'
             onPress={this.handleRegister}
+            style={{backgroundColor:'#7D2941'}}
           >
             Register
           </Button>

@@ -36,10 +36,15 @@ const theme = {
   roundness: 2,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#482637',
-    accent: '#7d2941',
+    primary: '#8333e9',
+    accent: '#ff7fae',
     surface : '#fff',
-    background : '#E9E3E3'
+    background : '#fff'
+    // primary: '#482637',
+    // accent: '#7d2941',
+    // surface : '#fff',
+    // background : '#B3A2A2'
+    // background : '#E9E3E3'
   },
 };
 

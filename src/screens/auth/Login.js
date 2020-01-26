@@ -4,7 +4,8 @@ import {
   View,
   TouchableOpacity,
   Alert,
-  ToastAndroid
+  ToastAndroid,
+  Image
 } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 // import auth, { firebase } from '@react-native-firebase/auth';
@@ -23,52 +24,33 @@ class Login extends Component {
     Auth.onAuthStateChanged(user => {
       if (!user) this.props.navigation.navigate('Login');
     });
+  };
 
-  }
-
-  handleLogin =  () => {
+  handleLogin = () => {
     console.log('clicked');
     const { email, password } = this.state;
-    Auth
-      .signInWithEmailAndPassword(email, password)
+    Auth.signInWithEmailAndPassword(email, password)
       .then(async response => {
         // console.log(response.user.uid)
         // console.log(response.user.email)
         // database().ref('users/').orderByChild('email').equalTo('r13.aero@yahoo.co.id').once('value', async snapshot => {
 
-        await Database
-          .ref('users/')
+        await Database.ref('users/')
           .orderByChild('email')
           .equalTo(this.state.email)
           .once('value', async snapshot => {
             const result = snapshot.val();
             let user = Object.values(result);
 
-            // console.log('userlogin',user[0]);
-            // console.log('uid',user[0].uid);
-            // console.log('email',user[0].email);
-            // console.log('name',user[0].name);
-            // console.log('address',user[0].address);
-            // console.log('bio',user[0].bio);
-            // console.log('desc',user[0].desc);
-            // console.log('phone',user[0].phone);
-
             AsyncStorage.setItem('id', response.user.uid);
             AsyncStorage.setItem('email', user[0].email);
             AsyncStorage.setItem('name', user[0].name);
             AsyncStorage.setItem('bio', user[0].bio);
-            
-            // AsyncStorage.setItem('address', user[0].address);
-            // AsyncStorage.setItem('desc', user[0].desc);
-            // AsyncStorage.setItem('phone', user[0].phone);
-
-            // console.log(user[0].name)
-            // console.log(user[0].email)
-            // console.log(user[0].address)
+            AsyncStorage.setItem('photo', user[0].photo);
           });
 
         // database().ref('/users/' + response.user.uid)
-        this.props.navigation.navigate('AppStack')
+        this.props.navigation.navigate('AppStack');
       })
       .catch(error => {
         // Alert(error.message)
@@ -83,13 +65,21 @@ class Login extends Component {
         <View
           style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
-          <Text>Ini Login Screen</Text>
+          <Image
+            style={{ paddingVertical: 30, width: 200 }}
+            source={require('../../assets/logo-lechate.png')}
+          />
+          <Text>Please enter your credentials to continue</Text>
         </View>
 
         <View style={{ flex: 1, width: '100%' }}>
           <TextInput
             label='Email'
             value={this.state.email}
+            // backgroundColor=''
+            // backgroundColor='black'
+            // style={{backgroundColor:'white'}}
+            // placeholderTextColor='black'
             onChangeText={email => this.setState({ email })}
           />
 
@@ -105,6 +95,7 @@ class Login extends Component {
             raised
             mode='contained'
             onPress={this.handleLogin}
+            // style={{ backgroundColor: '#ed4c5f' }}
           >
             Login
           </Button>

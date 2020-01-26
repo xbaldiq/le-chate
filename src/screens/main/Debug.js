@@ -10,14 +10,16 @@ class Debug extends Component {
   componentDidMount = () => {
     // const user = auth().currentUser;
 
-    Auth
-      .signOut()
+    Auth.signOut()
       .then(async res => {
         // Sign-out successful.
 
+        this.setState(
+          { id: await AsyncStorage.getItem('id') },
+        );
         await AsyncStorage.clear().then(() => {
-          // Alert.alert('sign out');
-          props.navigation.navigate('Login');
+          Alert.alert('sign out');
+          // props.navigation.navigate('Login');
         });
         // Alert.alert('sign out')
         // console.log(res)
