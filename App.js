@@ -8,8 +8,9 @@
 
 import React, { Component } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
-import Router from './src/router'
+import Router from './src/router';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import { Root } from 'native-base';
 
 import firebase from '@react-native-firebase/app';
 
@@ -38,14 +39,14 @@ const theme = {
     ...DefaultTheme.colors,
     primary: '#8333e9',
     accent: '#ff7fae',
-    surface : '#fff',
-    background : '#fff'
+    surface: '#fff',
+    background: '#fff'
     // primary: '#482637',
     // accent: '#7d2941',
     // surface : '#fff',
     // background : '#B3A2A2'
     // background : '#E9E3E3'
-  },
+  }
 };
 
 export default class App extends Component {
@@ -53,7 +54,9 @@ export default class App extends Component {
     return (
       <>
         <PaperProvider theme={theme}>
-          <Router />
+          <Root>
+            <Router />
+          </Root>
         </PaperProvider>
       </>
     );

@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { Text, View, TouchableOpacity, Alert, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-// import auth, { firebase } from '@react-native-firebase/auth';
-// import database from '@react-native-firebase/database';
 import Geolocation from 'react-native-geolocation-service';
 import { PermissionsAndroid } from 'react-native';
 import { Database, Auth } from '../../configs/firebase';
+import { showToast } from '../components/toast';
 
 class Register extends Component {
   state = {
@@ -15,14 +14,6 @@ class Register extends Component {
     latitude: -7.79273,
     longitude: 110.365841,
     errorMessage: null
-  };
-
-  componentDidMount = async () => {
-    Auth.onAuthStateChanged(user => {
-      if (!user) this.props.navigation.navigate('Login');
-    });
-
-    this.getLocation();
   };
 
   getLocation = async () => {
@@ -40,11 +31,9 @@ class Register extends Component {
           console.log(position);
           this.setState({ latitude: position.coords.latitude });
           this.setState({ longitude: position.coords.longitude });
-
-          // console.log(position.coords.longitude)
         },
         error => {
-          console.log(error.code, error.message);
+          // console.log(error.code, error.message);
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
       );
@@ -60,15 +49,16 @@ class Register extends Component {
           id: response.user.uid,
           latitude: this.state.latitude,
           longitude: this.state.longitude,
-          bio: 'Please update',
-          desc: 'Please update',
-          phone: 'Please update',
-          address: 'Please update',
+          bio: 'What you feeling today?',
+          desc: `Please tell us about yourself, don't be shy`,
+          phone: 'Please input your phone number',
+          address: 'Please input your current address',
           photo:
-            'https://firebasestorage.googleapis.com/v0/b/lechate-xbaldiq.appspot.com/o/images%2Fnorth_korea_the_real_kim.jpg?alt=media&token=a5f9814a-f753-4ece-8469-d78fb1fd247c'
+            'https://firebasestorage.googleapis.com/v0/b/lechate-xbaldiq.appspot.com/o/images%2Fnew-user.png?alt=media&token=cb17e9f2-a115-4f67-9574-a62d62ec37db'
         });
 
-        Alert.alert('Success Registered');
+        showToast('Register Success', `success`);
+
         this.props.navigation.navigate('Login');
       })
       .catch(error => {
@@ -84,16 +74,16 @@ class Register extends Component {
           style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
           <Image
-          resizeMode='contain'
-            style={{ paddingVertical: 30, width: 500, height:300 }}
+            resizeMode='contain'
+            style={{ paddingVertical: 30, width: 500, height: 300 }}
             source={require('../../assets/date-app2.jpg')}
-
           />
-          <Text style={{paddingTop:10}}>Please fill the form to register</Text>
-        </View>   
+          <Text style={{ paddingTop: 10 }}>
+            Please fill the form to register
+          </Text>
+        </View>
         <View
           style={{
-            // marginBottom: 10,
             width: '80%',
             backgroundColor: 'white',
             elevation: 5
@@ -106,61 +96,41 @@ class Register extends Component {
             onChangeText={name => this.setState({ name })}
           />
 
+          <TextInput
+            label='Email'
+            value={this.state.email}
+            style={{ backgroundColor: 'white' }}
+            onChangeText={email => this.setState({ email })}
+          />
 
-            <TextInput
-              label='Email'
-              value={this.state.email}
-              style={{ backgroundColor: 'white' }}
-              onChangeText={email => this.setState({ email })}
-            />
+          <TextInput
+            label='Password'
+            secureTextEntry={true}
+            value={this.state.password}
+            style={{ backgroundColor: 'white' }}
+            onChangeText={password => this.setState({ password })}
+          />
 
-            <TextInput
-              label='Password'
-              secureTextEntry={true}
-              value={this.state.password}
-              style={{ backgroundColor: 'white' }}
-              onChangeText={password => this.setState({ password })}
-            />
-
-            <Button
-              // icon='camera'
-              raised
-              mode='contained'
-              onPress={this.handleRegister}
-              style={{ backgroundColor: '#7D2941' }}
-            >
-              Register
-            </Button>
-          </View>
-          <View style={{ marginVertical: 20, alignItems: 'center' }}>
-            <TouchableOpacity
-              onPress={() => {
-                this.props.navigation.navigate('Login');
-              }}
-            >
-              <Text>Already have an account? Login here</Text>
-            </TouchableOpacity>
-          </View>
+          <Button
+            raised
+            mode='contained'
+            onPress={this.handleRegister}
+          >
+            Register
+          </Button>
         </View>
-      
+        <View style={{ marginVertical: 20, alignItems: 'center' }}>
+          <TouchableOpacity
+            onPress={() => {
+              this.props.navigation.navigate('Login');
+            }}
+          >
+            <Text>Already have an account? Login here</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     );
   }
 }
 
 export default Register;
-
-// DIY button
-{
-  /* <TouchableOpacity onClick>
-<View
-style={{
-  backgroundColor: '#482637',
-  height: 50,
-  alignItems: 'center',
-  justifyContent: 'center'
-}}
->
-<Text style={{ color: '#FFF' }}>Login</Text>
-</View>
-</TouchableOpacity> */
-}

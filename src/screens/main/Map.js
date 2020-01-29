@@ -1,14 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  Alert,
-  ToastAndroid,
-  Image
-} from 'react-native';
-import { Modal, Portal, Button, Provider } from 'react-native-paper';
-// import auth, { firebase } from '@react-native-firebase/auth';
+import { Text, View, TouchableOpacity, Image } from 'react-native';
 import MapView, { Callout, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import { PermissionsAndroid } from 'react-native';
@@ -17,6 +8,7 @@ import { withNavigationFocus } from 'react-navigation';
 import { Database, Auth } from '../../configs/firebase';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
+import { showToast } from '../components/toast';
 
 class Map extends Component {
   state = {
@@ -29,44 +21,68 @@ class Map extends Component {
     name: '',
     email: '',
     bio: '',
-    visible: false
+    visible: false,
+    isLogged: false
   };
-  
+
   watchID = null;
+
   componentDidMount = async () => {
-    Auth.onAuthStateChanged(async user => {
-      if (!user) {
-        Geolocation.clearWatch(this.watchID)
-        this.props.navigation.navigate('Login');
+    // Auth.onAuthStateChanged(async user => {
 
+    //   console.log('authChange')
+    //   console.log(this.state.isLogged)
 
-          
+    //   if (!user && this.state.isLogged) {
 
-        // Database.ref('users/'+this.)
-      }
-    });
+    //     console.log('logged out')
+    //     await Database.ref('/users/' + await AsyncStorage.getItem('id')).update({
+    //       isLogged: false
+    //     });
+    //     await AsyncStorage.clear().then(() => {
+    //       showToast('Signed Out', `success`);
+    //     });
+
+    //     this.setState({ id: '' });
+    //     Geolocation.clearWatch(this.watchID);
+
+    //     this.props.navigation.navigate('Login');
+
+    //   } else if (!user) {
+
+    //     console.log('please login')
+    //     this.props.navigation.navigate('Login');
+
+    //   }
+    // });
 
     this.setState({ id: await AsyncStorage.getItem('id') }, async () => {
       this.setState({ name: await AsyncStorage.getItem('name') });
       this.setState({ email: await AsyncStorage.getItem('email') });
       this.setState({ bio: await AsyncStorage.getItem('bio') });
       this.setState({ photo: await AsyncStorage.getItem('photo') });
+      this.setState({ isLogged: true });
 
-      // Change Login Status
-      await Database.ref('users/' + this.state.id)
-        // .child('isLogged')
-        .update({ isLogged: true });
+      await Database.ref('users/' + this.state.id).update({ isLogged: true });
     });
 
-    // this.setState({ id: await AsyncStorage.getItem('id') }, () => {
     this.grantMapAccess();
+
     let changeData = Database.ref('users/');
     changeData.on('value', () => {
       this.getFriendLocation();
-      console.log('Database updated');
+      // console.log('Database updated');
     });
-    // }
-    // );
+  };
+
+  componentDidUpdate = async prevProps => {
+    if (prevProps.isFocused !== this.props.isFocused) {
+      if (await this.props.isFocused) {
+        this.setState({ name: await AsyncStorage.getItem('name') });
+        this.setState({ bio: await AsyncStorage.getItem('bio') });
+        this.setState({ photo: await AsyncStorage.getItem('photo') });
+      }
+    }
   };
 
   grantMapAccess = async () => {
@@ -85,32 +101,37 @@ class Map extends Component {
           this.setState({ latitude: position.coords.latitude });
           this.setState({ longitude: position.coords.longitude });
 
-          await Database.ref('users/' + this.state.id).update({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          });
+          if (this.state.id && (await AsyncStorage.getItem('isLogged'))) {
+            await Database.ref('users/' + this.state.id).update({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            });
+          }
         },
         error => {
           console.log(error.code, error.message);
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
       );
-    }
 
-    this.watchID = Geolocation.watchPosition( async updatedPos => {
-      console.log('position loggedin updated')
-      await Database.ref('users/' + this.state.id).update({
-        latitude: updatedPos.coords.latitude,
-        longitude: updatedPos.coords.longitude
-      });
-    },
-    error => {
-      console.log(error.code, error.message);
-    },
-    { enableHighAccuracy: true, distanceFilter:50, interval: 10000 }
-    )
+      // Geolocation listen for location changes
+      this.watchID = Geolocation.watchPosition(
+        async updatedPos => {
+          if (await AsyncStorage.getItem('isLogged') && this.props.isFocused) {
+            console.log('change position triggered');
+            await Database.ref('users/' + await AsyncStorage.getItem('id')).update({
+              latitude: updatedPos.coords.latitude,
+              longitude: updatedPos.coords.longitude
+            });
+          }
+        },
+        error => {
+          console.log(error.code, error.message);
+        },
+        { enableHighAccuracy: false, distanceFilter: 100, interval: 10000 }
+      );
+    }
   };
-  
 
   getFriendLocation = async () => {
     console.log('getFriendLocation');
@@ -127,10 +148,8 @@ class Map extends Component {
         });
 
         this.setState({ filteredFriendList }, () => {
-          // console.log('friend',this.state.filteredFriendList)
           this.state.filteredFriendList.forEach(user => {
-            console.log('user', user);
-            // console.log('lat: ', user.name);
+            // console.log('user', user);
           });
         });
       });
@@ -177,8 +196,6 @@ class Map extends Component {
                     });
                   }}
                 >
-                  {/* <CalloutSubview /> */}
-
                   {user.isLogged ? (
                     // When user online
                     <View style={{ alignItems: 'center' }}>
@@ -195,7 +212,7 @@ class Map extends Component {
                         }}
                       ></Image>
                       <Octicons
-                        style={{ marginTop: -5, opacity: 0.6, }}
+                        style={{ marginTop: -5, opacity: 0.6 }}
                         name='triangle-down'
                         size={24}
                         color='#008000'
@@ -203,7 +220,7 @@ class Map extends Component {
                     </View>
                   ) : (
                     // When user offline
-                    <View style={{ alignItems: 'center', }}>
+                    <View style={{ alignItems: 'center' }}>
                       <Image
                         source={{
                           uri: user.photo
@@ -217,38 +234,24 @@ class Map extends Component {
                         }}
                       ></Image>
                       <Octicons
-                        style={{ marginTop: -5, opacity: 0.6, }}
+                        style={{ marginTop: -5, opacity: 0.6 }}
                         name='triangle-down'
                         size={24}
                         color='#000'
-                        
                       />
                     </View>
                   )}
-
-                  {/* <Image
-                      source={require('../../assets/drop-down-arrow.png')}
-                      style={{
-                        marginTop: -2,
-                        height: 20,
-                        width: 20,
-                        borderRadius: 50,
-                        // borderWidth: 1,
-                        opacity: 0.6,
-                        borderColor: '#7D2941'
-                      }}
-                    ></Image> */}
-
                   <Callout>
                     <View
                       style={{
-                        width: 120,
+                        width: 220,
+                        height: '100%',
                         alignItems: 'center',
                         borderRadius: 10
                       }}
                     >
                       <Text style={{ fontWeight: 'bold' }}>{user.name}</Text>
-                      <Text>{user.bio}</Text>
+                      <Text style={{ textAlign: 'center' }}>{user.bio}</Text>
                       <View
                         style={{
                           flexDirection: 'row',
@@ -292,24 +295,18 @@ class Map extends Component {
             style={{
               top: 10,
               left: 10,
-              // width: 2 00,
               height: 70,
-              // backgroundColor: '#000',
-              // backgroundColor: 'rgba(131, 51, 233, 0.6)',
               backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              // opacity: 0.5,
               borderRadius: 15,
               justifyContent: 'center',
-              alignItems: 'center',
-              // elevation:15
+              alignItems: 'center'
             }}
           >
             <View
-              // key={index}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                padding: 15,
+                padding: 15
               }}
             >
               <Image
@@ -365,51 +362,6 @@ class Map extends Component {
               </View>
             </View>
           </View>
-
-          {/* <Provider>
-            <Portal>
-              <Modal visible={this.state.visible} onDismiss={this._hideModal}>
-                <View
-                  style={{ justifyContent: 'center', alignItems: 'center' }}
-                >
-                  <View
-                    style={{
-                      flexDirection: 'column',
-                      backgroundColor: '#fff',
-                      padding: 20,
-                      margin: 20,
-                      borderRadius: 10,
-                      width: '70%',
-                      height: '70%',
-                      alignItems: 'center',
-                      justifyContent: 'space-around'
-                    }}
-                  >
-                    <Text>Iqbaldhia</Text>
-                    <Text>Online</Text>
-                    <Text>Ini Statusnya</Text>
-                    <Text>Location</Text>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-around'
-                      }}
-                    >
-                      <Button mode='contained' style={{ margin: 10 }}>
-                        Back
-                      </Button>
-                      <Button mode='contained' style={{ margin: 10 }}>
-                        Chat
-                      </Button>
-                    </View>
-                  </View>
-                </View>
-              </Modal>
-              <Button style={{ marginTop: 30 }} onPress={this._showModal}>
-                Show
-              </Button>
-            </Portal>
-          </Provider> */}
         </View>
       </>
     );

@@ -11,6 +11,8 @@ import { Database, Auth } from '../../configs/firebase';
 import { List } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { showToast } from '../components/toast';
+
 
 class ChatList extends Component {
   state = {

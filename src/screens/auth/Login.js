@@ -3,15 +3,12 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Alert,
-  ToastAndroid,
   Image
 } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-// import auth, { firebase } from '@react-native-firebase/auth';
-// import database from '@react-native-firebase/database';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Database, Auth } from '../../configs/firebase';
+import { showToast } from '../components/toast';
 
 class Login extends Component {
   state = {
@@ -27,41 +24,46 @@ class Login extends Component {
   };
 
   handleLogin = () => {
-    console.log('clicked');
-    const { email, password } = this.state;
-    Auth.signInWithEmailAndPassword(email, password)
-      .then(async response => {
-        // console.log(response.user.uid)
-        // console.log(response.user.email)
-        // database().ref('users/').orderByChild('email').equalTo('r13.aero@yahoo.co.id').once('value', async snapshot => {
 
-        await Database.ref('users/')
-          .orderByChild('email')
-          .equalTo(this.state.email)
-          .once('value', async snapshot => {
-            const result = snapshot.val();
-            let user = Object.values(result);
+    if (!this.state.email && !this.state.password) {
+      showToast('Please input your email and password', `warning`);
+    } else if (!this.state.email) {
+      showToast('Please input your email', `warning`);
+    } else if (!this.state.password) {
+      showToast('Please input your password', `warning`);
+    } else {
+      const { email, password } = this.state;
+      Auth.signInWithEmailAndPassword(email, password)
+        .then(async response => {
+          showToast('Welcome Back', `success`);
+          await Database.ref('users/')
+            .orderByChild('email')
+            .equalTo(this.state.email)
+            .once('value', async snapshot => {
 
-            AsyncStorage.setItem('id', response.user.uid);
-            AsyncStorage.setItem('email', user[0].email);
-            AsyncStorage.setItem('name', user[0].name);
-            AsyncStorage.setItem('bio', user[0].bio);
-            AsyncStorage.setItem('photo', user[0].photo);
-          });
+              const result = snapshot.val();
+              let user = Object.values(result);
+              
+              AsyncStorage.setItem('name', user[0].name);
+              AsyncStorage.setItem('id', response.user.uid);
+              AsyncStorage.setItem('email', user[0].email);
+              AsyncStorage.setItem('bio', user[0].bio);
+              AsyncStorage.setItem('photo', user[0].photo);
+              AsyncStorage.setItem('isLogged', 'true');
+            });
 
-        // database().ref('/users/' + response.user.uid)
-        this.props.navigation.navigate('AppStack');
-      })
-      .catch(error => {
-        // Alert(error.message)
-        console.log(error.message);
-        this.setState({ errorMessage: error.message });
-      });
+          this.props.navigation.navigate('AppStack');
+        })
+        .catch(error => {
+          showToast(error.message, `warning`);
+          this.setState({ errorMessage: error.message });
+        });
+    }
   };
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: '#fff', alignItems:'center' }}>
+      <View style={{ flex: 1, backgroundColor: '#fff', alignItems: 'center' }}>
         <View
           style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
@@ -69,17 +71,23 @@ class Login extends Component {
             style={{ paddingTop: 30, width: 200 }}
             source={require('../../assets/logo-lechate.png')}
           />
-          <Text style={{paddingVertical:30}}>Please enter your credentials to continue</Text>
+          <Text style={{ paddingVertical: 30 }}>
+            Please enter your credentials to continue
+          </Text>
         </View>
 
-        <View style={{marginBottom:30, width: '80%', backgroundColor:'white', elevation:5 }}>
+        <View
+          style={{
+            marginBottom: 30,
+            width: '80%',
+            backgroundColor: 'white',
+            elevation: 5
+          }}
+        >
           <TextInput
             label='Email'
             value={this.state.email}
-            // backgroundColor=''
-            // backgroundColor='black'
-            style={{backgroundColor:'white'}}
-            // placeholderTextColor='black'
+            style={{ backgroundColor: 'white' }}
             onChangeText={email => this.setState({ email })}
           />
 
@@ -87,64 +95,27 @@ class Login extends Component {
             label='Password'
             secureTextEntry={true}
             value={this.state.password}
-            style={{backgroundColor:'white'}}
+            style={{ backgroundColor: 'white' }}
             onChangeText={password => this.setState({ password })}
           />
 
-          <Button
-            // icon='camera'
-            raised
-            mode='contained'
-            onPress={this.handleLogin}
-            // style={{ backgroundColor: '#ed4c5f' }}
-          >
+          <Button raised mode='contained' onPress={this.handleLogin}>
             Login
           </Button>
 
-
-
-          <View>
-            {/* {this.state.errorMessage.includes('invalid-email') && ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT)} */}
-            {this.state.errorMessage.includes('invalid-email') && (
-              <Text>Invalid Email format</Text>
-            )}
-            {this.state.errorMessage.includes('user-not-found') && (
-              <Text>Email not registered</Text>
-            )}
-            {this.state.errorMessage.includes('wrong-password') && (
-              <Text>Invalid Password</Text>
-            )}
-          </View>
-          
         </View>
-        <View style={{marginVertical: 50, alignItems: 'center' }}>
-            <TouchableOpacity
-              onPress={() => {
-                this.props.navigation.navigate('Register');
-              }}
-            >
-              <Text>Your first visit to Le Chate App? Register here</Text>
-            </TouchableOpacity>
-          </View>
+        <View style={{ marginVertical: 50, alignItems: 'center' }}>
+          <TouchableOpacity
+            onPress={() => {
+              this.props.navigation.navigate('Register');
+            }}
+          >
+            <Text>Your first visit to Le Chate App? Register here</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
 }
 
 export default Login;
-
-// DIY button
-{
-  /* <TouchableOpacity onClick>
-<View
-style={{
-  backgroundColor: '#482637',
-  height: 50,
-  alignItems: 'center',
-  justifyContent: 'center'
-}}
->
-<Text style={{ color: '#FFF' }}>Login</Text>
-</View>
-</TouchableOpacity> */
-}

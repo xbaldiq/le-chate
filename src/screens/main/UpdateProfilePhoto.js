@@ -24,6 +24,7 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Button } from 'react-native-paper';
 import { Database, Auth, Storage } from '../../configs/firebase';
+import { showToast } from '../components/toast';
 
 const options = {
   title: 'Select Avatar',
@@ -36,6 +37,7 @@ const options = {
 
 class UpdateProfilePhoto extends Component {
   state = {
+    processUpload: false,
     filepath: {
       data: '',
       uri: ''
@@ -44,6 +46,7 @@ class UpdateProfilePhoto extends Component {
     fileUri: '',
     currentPhoto: '',
     isUpdated: false,
+    isUpdating: false,
     applyChanges: false
   };
 
@@ -104,14 +107,18 @@ class UpdateProfilePhoto extends Component {
             uploadBob.close();
             return imageRef.getDownloadURL();
           })
-          .then(url => {
+          .then( 
+            showToast('Uploading Process', `success`)
+            ,url => {
             // ToastAndroid.show(
             //   'Your cool avatar is being uploaded, its going back to your phone now',
             //   ToastAndroid.LONG,
             // );
             Database.ref('users/' + this.state.id).update({ photo: url });
 
-            Alert.alert('Profile Pict Updated');
+            this.setState({processUpload: false})
+            showToast('Profile Picture Updated', `success`);
+            // Alert.alert('Profile Pict Updated');
             // this.setState({userAvatar: url});
             // AsyncStorage.setItem('user.photo', this.state.userAvatar);
           });
@@ -146,6 +153,8 @@ class UpdateProfilePhoto extends Component {
         alert(response.customButton);
       } else {
         // Finish take a picture
+
+        this.setState({processUpload: true})
 
         const Blob = RNFetchBlob.polyfill.Blob;
         const fs = RNFetchBlob.fs;
@@ -182,7 +191,8 @@ class UpdateProfilePhoto extends Component {
             // );
             Database.ref('users/' + this.state.id).update({ photo: url });
 
-            Alert.alert('Profile Pict Updated');
+            this.setState({processUpload: false})
+            showToast('Profile Picture Updated', `success`)
             // this.setState({userAvatar: url});
             // AsyncStorage.setItem('user.photo', this.state.userAvatar);
           });
@@ -221,7 +231,10 @@ class UpdateProfilePhoto extends Component {
         console.log('User tapped custom button: ', response.customButton);
         alert(response.customButton);
       } else {
+
+        this.setState({processUpload: true})
         // Finish take a picture
+        // showToast('Uploading Process', `success`)
 
         const Blob = RNFetchBlob.polyfill.Blob;
         const fs = RNFetchBlob.fs;
@@ -249,6 +262,7 @@ class UpdateProfilePhoto extends Component {
           })
           .then(() => {
             uploadBob.close();
+            
             return imageRef.getDownloadURL();
           })
           .then(url => {
@@ -258,7 +272,8 @@ class UpdateProfilePhoto extends Component {
             // );
             Database.ref('users/' + this.state.id).update({ photo: url });
 
-            Alert.alert('Profile Pict Updated');
+            showToast('Profile Picture Updated', `success`)
+            // Alert.alert('Profile Pict Updated');
             // this.setState({userAvatar: url});
             // AsyncStorage.setItem('user.photo', this.state.userAvatar);
           });
@@ -323,6 +338,7 @@ class UpdateProfilePhoto extends Component {
             <View>
               {this.renderFileData()}
               <Text style={{ textAlign: 'center' }}>Profile Picture</Text>
+              {this.state.processUpload ? <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Please wait, uploading Image</Text>: this.state.isUpdated ? <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Upload Success</Text> : <Text></Text>}
             </View>
             {/* <View>
               {this.renderFileUri()}

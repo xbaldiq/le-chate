@@ -15,7 +15,7 @@ const AuthStack = createStackNavigator(
   },
   {
     headerMode: 'none',
-    initialRouteName: 'Register'
+    initialRouteName: 'Login'
   }
 );
 
@@ -76,8 +76,8 @@ const BottomStack = createMaterialBottomTabNavigator(
 const AppStack = createStackNavigator(
   {
     BottomStack,
-    UpdateProfilePhoto,
     Chat
+    // UpdateProfilePhoto,
   },
   {
     headerMode: 'none',
@@ -91,7 +91,7 @@ const Router = createSwitchNavigator(
     AuthStack,
   },
   {
-    initialRouteName: 'AppStack'
+    initialRouteName: 'Loading'
   }
 );
 
