@@ -8,12 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:964688389099:android:a0d011c826034d1b0eefae",
+        "mobilesdk_app_id": "1:964688389099:android:723e64e0152420eb0eefae",
         "android_client_info": {
           "package_name": "com.lechate"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "964688389099-n74ne5ci9ivgvk6c33r3o6beds0hu3n3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lechate",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
         {
           "client_id": "964688389099-smel41rk7fs39rr9l70okpgkus4msei2.apps.googleusercontent.com",
           "client_type": 3
