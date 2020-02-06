@@ -7,7 +7,7 @@ import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { GiftedChat } from 'react-native-gifted-chat';
 // import FireChat from '../../configs/FireChat';
-import { Database, Auth } from '../../configs/firebase';
+// import { Database, Auth } from '../../configs/firebase';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 class Chat extends Component {
@@ -70,7 +70,7 @@ class Chat extends Component {
       .on('child_added', snapshot => callback(this.parse(snapshot)));
 
   get ref() {
-    return Database.ref('messages');
+    return database().ref('messages');
 
     // return Database.ref('messages/').orderByChild('user/name').equalTo('Si Otong');
   }
@@ -115,7 +115,7 @@ class Chat extends Component {
   };
 
   get timestamp() {
-    return Database.ServerValue.TIMESTAMP;
+    return database().ServerValue.TIMESTAMP;
   }
 
   send = messages => {

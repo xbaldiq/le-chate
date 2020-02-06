@@ -16,14 +16,14 @@ import ImagePicker from 'react-native-image-picker';
 
 import { showToast } from '../components/toast';
 // import { DB, Auth } from '../../configs/firebase';
-// import auth, { firebase } from '@react-native-firebase/auth';
-// import database from '@react-native-firebase/database';
+import auth, { firebase } from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 import defaultProfPict from '../../assets/img/alexander-unsplash.jpg';
 import { TextInput, Button } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Database, Auth } from '../../configs/firebase';
+// import { Database, Auth } from '../../configs/firebase';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 class Profile extends Component {
@@ -33,7 +33,7 @@ class Profile extends Component {
   };
 
   getProfile = () => {
-    Database.ref('users/' + this.state.id).on('value', snapshot => {
+    database().ref('users/' + this.state.id).on('value', snapshot => {
       const result = snapshot.val();
 
       this.setState({ name: result.name });
@@ -68,7 +68,7 @@ class Profile extends Component {
 
   acceptEdit = async () => {
 
-    await Database.ref(`/users/${this.state.id}`).update({
+    await database().ref(`/users/${this.state.id}`).update({
       name: this.state.name,
       email: this.state.email,
       bio: this.state.bio,
@@ -83,13 +83,13 @@ class Profile extends Component {
   };
 
   handleLogout = async () => {
-    await Database.ref('/users/' +  await AsyncStorage.getItem('id')).update({
+    await database().ref('/users/' +  await AsyncStorage.getItem('id')).update({
       isLogged: false
     });
     await AsyncStorage.clear().then(() => {
     })
 
-    Auth.signOut()
+    auth().signOut()
     .then(async res => {
       showToast('Signed Out', `success`);
     })

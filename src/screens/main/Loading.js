@@ -1,24 +1,37 @@
 import React, { Component } from 'react';
 import { View } from 'react-native-animatable';
 import { ActivityIndicator, Colors } from 'react-native-paper';
-import { Database, Auth } from '../../configs/firebase';
+// import { Database, Auth } from '../../configs/firebase';
+import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-community/async-storage';
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes
+} from '@react-native-community/google-signin';
 
 export default class Loading extends Component {
-
   componentDidMount = async () => {
-
     // First Open App
-    Auth.onAuthStateChanged(async user => {
-      console.log('onAuthStateChanged')
+    // Auth.onAuthStateChanged(async user => {
 
-      if(await AsyncStorage.getItem('isLogged') === 'true'){
-        this.props.navigation.navigate('AppStack')
+    // const isSignedIn = await GoogleSignin.isSignedIn();
+    // if (isSignedIn) {
+    //   this.props.navigation.navigate('AppStack');
+    // } else {
+    //   this.props.navigation.navigate('AuthStack');
+    // }
+
+    // console.log('isSignedIn', isSignedIn)
+
+    auth().onAuthStateChanged(async user => {
+      console.log('onAuthStateChanged');
+      if ((await AsyncStorage.getItem('isLogged')) === 'true') {
+        this.props.navigation.navigate('AppStack');
+      } else {
+        this.props.navigation.navigate('AuthStack');
       }
-      else{
-        this.props.navigation.navigate('AuthStack')
-      }
-    })
+    });
 
     //   console.log('authChange')
     //   // console.log(this.state.isLogged)
@@ -40,13 +53,12 @@ export default class Loading extends Component {
     //     this.props.navigation.navigate('Login');
 
     //   } else if (!user) {
-        
+
     //     console.log('please login')
     //     this.props.navigation.navigate('Login');
 
     //   }
     // });
-
   };
 
   render() {
