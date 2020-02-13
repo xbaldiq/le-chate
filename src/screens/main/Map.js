@@ -9,6 +9,7 @@ import { Database, Auth } from '../../configs/firebase';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import { showToast } from '../components/toast';
+// import messaging from '@react-native-firebase/messaging';
 
 class Map extends Component {
   state = {
