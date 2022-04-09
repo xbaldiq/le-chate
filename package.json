@@ -20,7 +20,7 @@
     "@react-native-firebase/storage": "^6.2.0",
     "axios": "^0.19.1",
     "firebase": "^7.7.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "native-base": "^2.13.8",
     "react": "16.9.0",
     "react-native": "0.61.5",
